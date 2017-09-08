@@ -2,7 +2,7 @@
   <div class="new-body">
     <div class="title-bar">
       <flexbox style="justify-content: space-between;">
-        <div class="cancel">
+        <div class="cancel" @click="cancel">
           <router-link to="/home">取消</router-link>
         </div>
         <div class="title">编辑闹钟</div>
@@ -68,10 +68,22 @@
         title: '标签',
         list1: [['闹钟', '工作日上午', '工作日下午', '节假日', '日程']],
         value1: ['闹钟'],
-        alarms: store.alarms
+        alarms: store.alarms,
+        myNewShow: this.newShow
+      }
+    },
+    watch: {
+      newShow (val) {
+        this.myNewShow = val
+      },
+      myNewShow (val) {
+        this.$emit('on-result-change', val)
       }
     },
     methods: {
+      cancel () {
+        this.myNewShow = !this.myNewShow
+      },
       updateAlarm () {
         var key = localStorage.key(this.id)
         localStorage.removeItem(key)
