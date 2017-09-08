@@ -1,0 +1,63 @@
+body {
+  color: #fff;
+  background-color: #000;
+  font-size: 16px;
+  height: 100%;
+}
+
+a {
+  color: #f47920;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.title-bar {
+  padding: 10px;
+  color: #f47920;
+  border-bottom: 1px solid rgba(102, 102, 102, 0.5);
+}
+
+.title-bar .title {
+  color: #fff;
+  font-size: 18px;
+}
+
+.content {
+  /* flex-grow: 1; */
+  overflow: hidden;
+}
+
+.content .wrap {
+  padding: 0 10px;
+}
+
+.content .alarm-period {
+  font-size: 25px;
+}
+
+.content .alarm-time {
+  font-size: 45px;
+}
+
+.weui-cells:after, .weui-cells:before {
+  border: none!important;
+}
+
+.weui-cells {
+  color: #fff!important;
+  background-color: #000!important;
+}
+
+/* .weui-cell {
+  min-height: 32px;
+  padding: 10px 15px!important;
+  border-bottom: 1px solid rgba(102, 102, 102, 0.5);
+} */
+
+.vux-cell-box:before {
+  border: none!important;
+}
