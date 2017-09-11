@@ -22,6 +22,7 @@
         </transition>
         
         <add-new-item @on-result-change="onResultChange" :newShow="newShow" v-if="newShow"></add-new-item>
+        <!-- <alarm-edit @on-result-change="onResultChange" :newShow="newShow" v-if="newShow"></alarm-edit> -->
         <scroller lock-x height="600px" scrollbar-y ref="scroller">
           <div>
             <transition-group tag="div" name="list">

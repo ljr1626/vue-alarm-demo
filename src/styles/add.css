@@ -1,3 +1,7 @@
+.new-body {
+  z-index: 100!important;
+}
+
 .new-body .wrap .select-item {
   width: 100%;
   height: 50px;
@@ -26,21 +30,24 @@
   padding: 0 15px!important;
 }
 
-.new-body .scroller-mask {
+.scroller-mask {
   background-image: none!important;
 }
 
-.new-body .scroller-indicator {
+.scroller-indicator {
+  border-top: 1px solid rgba(102, 102, 102, 0.3);
   border-bottom: 1px solid rgba(102, 102, 102, 0.3);
   color: #fff;
   font-size: 16px;
 }
 
-.new-body .scroller-item {
+.scroller-item {
   color: #ddd!important;
 }
 
-.new-body .vux-popup-picker-header, .vux-popup-picker-container {
+.vux-popup-picker-header, .vux-popup-picker-container {
+  background-image: none!important;
   background-color: #000!important;
   color: #f47920!important;
+  z-index: 200!important;
 }
