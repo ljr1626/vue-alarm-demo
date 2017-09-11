@@ -24,7 +24,7 @@
           </div>
           <div class="select-item later">
             <group style="width: 100%;">
-              <x-switch title="稍后提醒" v-model='later' style="background-color: #000; padding: 0;"></x-switch>
+              <x-switch title="稍后提醒" v-model='isDelay' style="background-color: #000; padding: 0;"></x-switch>
             </group>
           </div>
         </flexbox>
@@ -35,8 +35,9 @@
 
 <script>
   import { Flexbox, FlexboxItem, Divider, XSwitch, Group, Scroller, Datetime, Picker, PopupPicker } from 'vux'
-  import store from '../store'
+  import store from '@/store'
 
+  var timePeriod, timeHour, timeMinute
   let minute = []
   for (var i = 0; i < 60; i++) {
     var c
@@ -63,13 +64,24 @@
     data () {
       return {
         times: [['上午', '下午'], ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11'], minute],
-        time: ['上午', '6', '30'],
-        later: false,
+        time: [timePeriod, timeHour, timeMinute],
+        isDelay: false,
         title: '标签',
         list1: [['闹钟', '工作日上午', '工作日下午', '节假日', '日程']],
         value1: ['闹钟'],
-        alarms: store.alarms,
         myNewShow: this.newShow
+      }
+    },
+    created:function() {
+      for (var i = 0; i < this.$store.state.alarms.length; i++) {
+        if (this.$store.state.alarms[i].id == this.id) {
+          var alarm = this.$store.state.alarms[i]
+          timePeriod = alarm.period
+          timeHour = alarm.time.substr(0, 2)
+          timeMinute = alarm.time.substring(3)
+          console.log(timeHour)
+          console.log(timeMinute)
+        }
       }
     },
     watch: {
@@ -85,21 +97,14 @@
         this.myNewShow = !this.myNewShow
       },
       updateAlarm () {
-        var key = localStorage.key(this.id)
-        localStorage.removeItem(key)
-        let alarm = {}
-        alarm.id = this.time[0] + this.time[1] + ':' + this.time[2]
-        alarm.alarmPeriod = this.time[0]
-        alarm.alarmTime = this.time[1] + ':' + this.time[2]
-        alarm.alarmLabel = this.value1[0]
-        alarm.switch = true
-        if (this.later === false) {
-          alarm.alarmLater = ''
-        } else {
-          alarm.alarmLater = '，稍后提醒'
-        }
-        var str = JSON.stringify(alarm)
-        localStorage.setItem(alarm.id, str)
+        let newAlarm = {}
+        newAlarm.id = this.id
+        newAlarm.period = this.time[0]
+        newAlarm.time = this.time[1] + ':' + this.time[2]
+        newAlarm.label = this.value1[0]
+        newAlarm.isOn = true
+        newAlarm.isDelay = this.isDelay
+        this.$store.commit('EDIT_ALARMS', newAlarm)
       }
     }
   }

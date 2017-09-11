@@ -20,7 +20,7 @@
           </div>
           <div class="select-item later">
             <group style="width: 100%;">
-              <x-switch title="稍后提醒" v-model='later' style="background-color: #000; padding: 0;"></x-switch>
+              <x-switch title="稍后提醒" v-model='isDelay' style="background-color: #000; padding: 0;"></x-switch>
             </group>
           </div>
         </flexbox>
@@ -31,7 +31,6 @@
 
 <script>
   import { Flexbox, FlexboxItem, Divider, XSwitch, Group, Scroller, Datetime, Picker, PopupPicker } from 'vux'
-  // import deleteItem from '../vuex/action'
 
   let minute = []
   for (var i = 0; i < 60; i++) {
@@ -61,7 +60,7 @@
         minute: [minute],
         times: [['上午', '下午'], ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11'], minute],
         time: ['上午', '06', '30'],
-        later: false,
+        isDelay: false,
         title: '标签',
         list1: [['闹钟', '工作日上午', '工作日下午', '节假日', '日程']],
         value1: ['闹钟'],
@@ -82,18 +81,20 @@
       },
       save () {
         let alarm = {}
-        alarm.id = this.time[0] + this.time[1] + ':' + this.time[2]
-        alarm.alarmPeriod = this.time[0]
-        alarm.alarmTime = this.time[1] + ':' + this.time[2]
-        alarm.alarmLabel = this.value1[0]
-        alarm.switch = true
-        if (this.later === false) {
-          alarm.alarmLater = ''
-        } else {
-          alarm.alarmLater = '，稍后提醒'
-        }
-        var str = JSON.stringify(alarm)
-        localStorage.setItem(alarm.id, str)
+        alarm.id = new Date().getTime()
+        alarm.period = this.time[0]
+        alarm.time = this.time[1] + ':' + this.time[2]
+        alarm.label = this.value1[0]
+        alarm.isOn = true
+        alarm.isDelay = this.isDelay
+        // if (this.later === false) {
+        //   alarm.isDelay = ''
+        // } else {
+        //   alarm.isDelay = '，稍后提醒'
+        // }
+        // var str = JSON.stringify(alarm)
+        // localStorage.setItem(localKey, str)
+        this.$store.commit('ADD_ALARMS', alarm)
         this.myNewShow = !this.myNewShow
       }
     }

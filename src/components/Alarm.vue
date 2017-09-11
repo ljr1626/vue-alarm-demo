@@ -22,11 +22,10 @@
         </transition>
         
         <add-new-item @on-result-change="onResultChange" :newShow="newShow" v-if="newShow"></add-new-item>
-        <!-- <alarm-edit @on-result-change="onResultChange" :newShow="newShow" v-if="newShow"></alarm-edit> -->
         <scroller lock-x height="600px" scrollbar-y ref="scroller">
           <div>
             <transition-group tag="div" name="list">
-              <div class="alarm-item" :key="index" v-for="(alarm,index) in alarms">
+              <div class="alarm-item" :key="index" v-for="(alarm,index) in this.$store.state.alarms">
                 <transition name="show-fade">
                   <x-icon v-if="!show" @click="deleteItem(index, alarm.id)" type="ios-minus" size="30"></x-icon>
                 </transition>
@@ -35,19 +34,19 @@
                     <div class="time-show" :key="index">
                       <flexbox orient="vertical">
                         <flexbox>
-                          <div class="alarm-period">{{ alarm.alarmPeriod }}</div>
-                          <div class="alarm-time">{{ alarm.alarmTime }}</div>
+                          <div class="alarm-period">{{ alarm.period }}</div>
+                          <div class="alarm-time">{{ alarm.time }}</div>
                         </flexbox>
                         <flexbox>
-                          <div class="alarm-label">{{ alarm.alarmLabel }}</div>
-                          <div class="later">{{ alarm.alarmLater }}</div>
+                          <div class="alarm-label">{{ alarm.label }}</div>
+                          <div class="later" v-model="alarm.isDelay">{{ alarm.isDelay ? '，稍后提醒' : '' }}</div>
                         </flexbox>
                       </flexbox>
                     </div>
                   </transition-group>
                   <group>
                     <transition name="show-fade">
-                      <x-switch v-if="show" @click.native="itemSwitch(alarm.id)" v-model="alarm.switch" title="" style="padding-top: 0;"></x-switch>
+                      <x-switch v-if="show" @click.native="itemSwitch(alarm.id)" v-model="alarm.isOn" title="" style="padding-top: 0;"></x-switch>
                     </transition>
                   </group>
                 </flexbox>
@@ -55,7 +54,7 @@
                   <x-icon v-if="!show" type="ios-arrow-forward" size="30"></x-icon>
                 </transition>
                 <div class="edit-show" v-if="!show">
-                  <router-link :to="'/edit/'+ index">
+                  <router-link :to="'/edit/'+ alarm.id">
                     <div style="height: 100%"></div>
                   </router-link>
                 </div>
@@ -71,7 +70,7 @@
 
 <script>
   import { XButton, Flexbox, FlexboxItem, Divider, XSwitch, Group, Scroller } from 'vux'
-  import store from '../store'
+  import store from '@/store'
   import timeToRing from '../timeToRing'
   import AddNewItem from '../components/AddNewItem.vue'
 
@@ -86,15 +85,25 @@
       XButton,
       AddNewItem
     },
+    created:function() {
+      var alarm = []
+      var str = localStorage.getItem('myAlarms')
+      var localAlarm = JSON.parse(str)
+      if(localAlarm != null) {
+        this.$store.commit('INIT_ALARMS', localAlarm)
+      } else {
+        this.$store.commit('INIT_ALARMS', alarm)
+      }
+    },
     data () {
       return {
         value1: true,
         value2: false,
-        show: store.show,
+        show: true,
         newShow: false,
-        showModel: timeToRing.showModel,
+        showModel: this.$store.state.showModel,
         isEditing: true,
-        alarms: {}
+        // alarms: this.$store.state.alarms
       }
     },
     methods: {
@@ -102,22 +111,13 @@
         this.show = !this.show
         this.isEditing = !this.isEditing
       },
-      deleteItem (index, id) {
-        localStorage.removeItem(id)
-        this.alarms.splice(index, 1)
+      deleteItem (index) {
+        // localStorage.removeItem(id)
+        // this.$store.state.alarms.splice(index, 1)
+        this.$store.commit('DELETE_ALARMS', index)
       },
-      itemSwitch (index) {
-        var newAlarm = {}
-        var str = localStorage.getItem(index)
-        var alarm = JSON.parse(str)
-        newAlarm.id = alarm.id
-        newAlarm.alarmPeriod = alarm.alarmPeriod
-        newAlarm.alarmTime = alarm.alarmTime
-        newAlarm.alarmLabel = alarm.alarmLabel
-        newAlarm.switch = !alarm.switch
-        newAlarm.alarmLater = alarm.alarmLater
-        var newStr = JSON.stringify(newAlarm)
-        localStorage.setItem(alarm.id, newStr)
+      itemSwitch (id) {
+        this.$store.commit('SWITCH_CHANGE', id)
       },
       close () {
         this.showModel = !this.showModel
@@ -128,11 +128,6 @@
       onResultChange (val) {
         this.newShow = val
       }
-    },
-    beforeMount: function () {
-      this.$nextTick(() => {
-        this.alarms = store.alarms
-      })
     }
   }
 
@@ -210,4 +205,3 @@
     transform: translateX(30px);
   }
 </style>
-</script>
