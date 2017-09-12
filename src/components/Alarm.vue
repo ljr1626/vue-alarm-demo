@@ -16,7 +16,7 @@
               <flexbox orient="vertical" style="justify-content: space-between;">
                 <div class="show-title">Time to ring</div>
                 <x-button type="primary" @click.native="delay">稍后提醒</x-button>
-                <x-button type="primary" action-type="button" @click.native="close">关闭闹钟</x-button>
+                <x-button type="primary" @click.native="close">关闭闹钟</x-button>
               </flexbox>
             </div>
           </div>
@@ -28,23 +28,21 @@
             <transition-group tag="div" name="list">
               <div class="alarm-item" :key="index" v-for="(alarm,index) in this.$store.state.alarms">
                 <transition name="show-fade">
-                  <x-icon v-if="!show" @click="deleteItem(index, alarm.id)" type="ios-minus" size="30"></x-icon>
+                  <x-icon v-if="!show" @click="deleteItem(index)" type="ios-minus" size="30"></x-icon>
                 </transition>
                 <flexbox style="justify-content: space-between;">
-                  <transition-group name="flip-list" tag="div">
-                    <div class="time-show" :key="index">
-                      <flexbox orient="vertical">
-                        <flexbox>
-                          <div class="alarm-period">{{ alarm.period }}</div>
-                          <div class="alarm-time">{{ alarm.time }}</div>
-                        </flexbox>
-                        <flexbox>
-                          <div class="alarm-label">{{ alarm.label }}</div>
-                          <div class="later" v-model="alarm.isDelay">{{ alarm.isDelay ? '，稍后提醒' : '' }}</div>
-                        </flexbox>
+                  <div class="time-show" :key="index">
+                    <flexbox orient="vertical">
+                      <flexbox>
+                        <div class="alarm-period">{{ alarm.period }}</div>
+                        <div class="alarm-time">{{ alarm.time }}</div>
                       </flexbox>
-                    </div>
-                  </transition-group>
+                      <flexbox>
+                        <div class="alarm-label">{{ alarm.label }}</div>
+                        <div class="later" v-model="alarm.isDelay">{{ alarm.isDelay ? '，稍后提醒' : '' }}</div>
+                      </flexbox>
+                    </flexbox>
+                  </div>
                   <group>
                     <transition name="show-fade">
                       <x-switch v-if="show" @click.native="itemSwitch(alarm.id)" v-model="alarm.isOn" title="" style="padding-top: 0;"></x-switch>
@@ -112,7 +110,6 @@
           // return this.showModel = true
         },
         set: function(newValue) {
-          // this.showModel = !this.showModel
         }
       }
       
@@ -121,6 +118,14 @@
       trigger () {
         this.show = !this.show
         this.isEditing = !this.isEditing
+        var timeShow = document.getElementsByClassName('time-show')
+        for(var i = 0; i < timeShow.length; i++){
+          if (timeShow[i].className == 'time-show'){
+            timeShow[i].className += " active"
+          } else {
+            timeShow[i].className = timeShow[i].className.replace(" active", "")
+          }
+        }
       },
       deleteItem (index) {
         this.$store.commit('DELETE_ALARMS', index)
@@ -154,6 +159,8 @@
   @import '../styles/common.css';
 
   .alarm-item {
+    display: flex;
+    align-items: center;
     position: relative;
     border-bottom: 1px solid rgba(102, 102, 102, 0.5);
   }
@@ -181,6 +188,15 @@
     font-size: 30px;
   }
 
+  .time-show {
+    transition: all 0.5s;
+    transform: translateX(0);
+  }
+
+  .time-show.active {
+    transform: translateX(50px);
+  }
+
   .edit-show {
     position: absolute;
     top: 0;
@@ -193,6 +209,7 @@
   .vux-x-icon-ios-minus {
     position: absolute;
     top: 35px;
+    /* width: 60px; */
     fill: #F70968;
   }
 
@@ -205,12 +222,7 @@
 
   .show-fade-enter-active,
   .show-fade-leave-active {
-    transition: opacity 0.5s;
-  }
-
-  .flip-list-move {
-    /* transform: translateX(50px); */
-    transition: transform 1s;
+    transition: all 0.5s;
   }
 
   .show-fade-enter,
