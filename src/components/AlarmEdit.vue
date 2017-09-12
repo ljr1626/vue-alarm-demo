@@ -37,7 +37,6 @@
   import { Flexbox, FlexboxItem, Divider, XSwitch, Group, Scroller, Datetime, Picker, PopupPicker } from 'vux'
   import store from '@/store'
 
-  var timePeriod, timeHour, timeMinute
   let minute = []
   for (var i = 0; i < 60; i++) {
     var c
@@ -64,7 +63,7 @@
     data () {
       return {
         times: [['上午', '下午'], ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11'], minute],
-        time: [timePeriod, timeHour, timeMinute],
+        time: ['上午', '06', '30'],
         isDelay: false,
         title: '标签',
         list1: [['闹钟', '工作日上午', '工作日下午', '节假日', '日程']],
@@ -76,11 +75,9 @@
       for (var i = 0; i < this.$store.state.alarms.length; i++) {
         if (this.$store.state.alarms[i].id == this.id) {
           var alarm = this.$store.state.alarms[i]
-          timePeriod = alarm.period
-          timeHour = alarm.time.substr(0, 2)
-          timeMinute = alarm.time.substring(3)
-          console.log(timeHour)
-          console.log(timeMinute)
+          this.time[0] = alarm.period
+          this.time[1] = alarm.time.substr(0, 2)
+          this.time[2] = alarm.time.substring(3)
         }
       }
     },

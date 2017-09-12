@@ -15,8 +15,8 @@ function timeToRing () {
       newPeriod = 'pm'
     }
     timeStr = newPeriod + alarmList[i].time + ':00'
-    if (currentTime === timeStr) {
-      alert('time to ring')
+    if (currentTime === timeStr && alarmList[i].isOn == true) {
+      // alert('time to ring')
       store.state.showModel = !store.state.showModel
     }
   }

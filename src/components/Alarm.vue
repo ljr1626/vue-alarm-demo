@@ -9,12 +9,13 @@
     </div>
     <div class="content">
       <div class="wrap">
+
         <transition name="show-fade">
-          <div class="show-model" v-model="showModel" v-if="showModel">
+          <div class="show-model" v-model="showModel" v-show="showModel">
             <div class="model-content">
               <flexbox orient="vertical" style="justify-content: space-between;">
-                <div class="show-title">闹钟时间到</div>
-                <x-button type="primary">稍后提醒</x-button>
+                <div class="show-title">Time to ring</div>
+                <x-button type="primary" @click.native="delay">稍后提醒</x-button>
                 <x-button type="primary" action-type="button" @click.native="close">关闭闹钟</x-button>
               </flexbox>
             </div>
@@ -101,10 +102,20 @@
         value2: false,
         show: true,
         newShow: false,
-        showModel: this.$store.state.showModel,
-        isEditing: true,
-        // alarms: this.$store.state.alarms
+        isEditing: true
       }
+    },
+    computed: {
+      showModel: {
+        get: function() {
+          return this.showModel = this.$store.state.showModel
+          // return this.showModel = true
+        },
+        set: function(newValue) {
+          // this.showModel = !this.showModel
+        }
+      }
+      
     },
     methods: {
       trigger () {
@@ -112,15 +123,20 @@
         this.isEditing = !this.isEditing
       },
       deleteItem (index) {
-        // localStorage.removeItem(id)
-        // this.$store.state.alarms.splice(index, 1)
         this.$store.commit('DELETE_ALARMS', index)
       },
       itemSwitch (id) {
         this.$store.commit('SWITCH_CHANGE', id)
       },
       close () {
-        this.showModel = !this.showModel
+        this.$store.state.showModel = !this.$store.state.showModel
+      },
+      delay () {
+        this.$store.state.showModel = !this.$store.state.showModel
+        var vm = this
+        setTimeout(function() {
+          vm.$store.state.showModel = !vm.$store.state.showModel
+        },5000)
       },
       add () {
         this.newShow = !this.newShow
@@ -144,12 +160,25 @@
 
   .show-model {
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 2;
-    background-color: rgba(102, 102, 102, 0.5)
+    background-color: rgba(0, 0, 0, 0.8)
+  }
+
+  .show-model .model-content {
+    width: 300px;
+    height: 300px;
+  }
+
+  .show-model .show-title {
+    height: 100px;
+    font-size: 30px;
   }
 
   .edit-show {
@@ -180,7 +209,7 @@
   }
 
   .flip-list-move {
-    transform: translateX(50px);
+    /* transform: translateX(50px); */
     transition: transform 1s;
   }
 
@@ -188,19 +217,12 @@
   .show-fade-leave-to {
     opacity: 0;
   }
-  .slide-fade-enter-active, .slide-fade-leave-active {
-    transition: all 0.5s;
-  }
-
-  .slide-fade-enter, .slide-fade-leave-to {
-    transform: translateX(50px);
-  }
 
   .list-enter-active, .list-leave-active {
     transition: all 1s;
   }
-  .list-enter, .list-leave-to
-  /* .list-leave-active for below version 2.1.8 */ {
+
+  .list-enter, .list-leave-to {
     opacity: 0;
     transform: translateX(30px);
   }
